@@ -1,1 +1,2 @@
-return require(script.Parent.Parent.React)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+return require(ReplicatedStorage.Packages.React.React)

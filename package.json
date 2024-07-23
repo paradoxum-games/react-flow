@@ -1,0 +1,12 @@
+{
+  "name": "@paradoxum-games/react-flow",
+  "version": "0.1.0",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paradoxum-games/react-flow"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

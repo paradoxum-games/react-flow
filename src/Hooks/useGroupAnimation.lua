@@ -74,9 +74,6 @@ local function getStateContainer(defaults: DefaultProperties)
 	local setters = {}
 	local values = {}
 
-	setmetatable(setters, { __mode = "v" })
-	setmetatable(values, { __mode = "v" })
-
 	for name, value in defaults do
 		local binding, updateBinding = useBinding(value)
 

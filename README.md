@@ -1,6 +1,30 @@
-# React-Flow
 
-A blazing fast animation library for React-Lua interfaces, providing stateful animations with unrestricted flexibility and performance. React-Flow delivers a powerful animation system built specifically for React's component-based architecture, allowing developers to create fluid, responsive UI animations with minimal effort.
+<h3 align="center">
+    <img src="https://i.imgur.com/I1CRYmc.png" alt="Slither Icon" width="160" />
+    <br />
+	<br />
+	React-Flow
+</h3>
+
+<div align="center">
+⚡ A blazing fast animation library for React-Lua interfaces, providing stateful animations with unrestricted flexibility and performance. 🤌
+</div>
+
+<div align="center">
+<br />
+
+[![Version](https://img.shields.io/github/v/release/outofbears/react-flow.svg?style=flat-square)](https://github.com/outofbears/react-flow/releases)
+[![License](https://img.shields.io/github/license/outofbears/react-flow.svg?style=flat-square)](https://github.com/outofbears/react-flow/blob/main/LICENSE.md)
+[![Stars](https://img.shields.io/github/stars/outofbears/react-flow.svg?style=flat-square)](https://github.com/outofbears/react-flow/stargazers)
+[![Forks](https://img.shields.io/github/forks/outofbears/react-flow.svg?style=flat-square)](https://github.com/outofbears/react-flow/network/members)
+[![Watchers](https://img.shields.io/github/watchers/outofbears/react-flow.svg?style=flat-square)](https://github.com/outofbears/react-flow/watchers)
+[![Issues](https://img.shields.io/github/issues/outofbears/react-flow.svg?style=flat-square)](https://github.com/outofbears/react-flow/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/outofbears/react-flow.svg?style=flat-square)](https://github.com/outofbears/react-flow/pulls)
+[![Last Commit](https://img.shields.io/github/last-commit/outofbears/react-flow.svg?style=flat-square)](https://github.com/outofbears/react-flow/commits/main)
+
+
+</div>
+
 
 ## 📋 Table of Contents
 
@@ -33,7 +57,7 @@ Add React-Flow to your `wally.toml` file:
 
 ```toml
 [dependencies]
-ReactFlow = "yourusername/react-flow@0.1.0"
+ReactFlow = "outofbears/react-flow@0.1.6"
 ```
 
 Then install with:
@@ -107,8 +131,7 @@ Creates tween-based animations that follow a specific timing curve. Ideal for an
 - **config:** A configuration table with the following properties:
   - **start:** Initial value of the animation (required)
   - **target:** Target value to animate toward (optional)
-  - **info:** Spring stiffness - higher values create faster motion (default: 10)
-  - **immediate:** If true, changes happen instantly without animation (optional, default: false)
+  - **info:** TweenInfo instance (required)
 
 **Returns:**  
 A binding that updates as the animation progresses, and an update function to modify the animation.
@@ -122,7 +145,7 @@ local transparency, updateTransparency = useTween({
     start = 1,      -- Initial value (required)
     target = 0,     -- Target value (optional)
 
-    -- Optional TweenInfo - controls duration, easing style, and behavior
+    -- TweenInfo - controls duration, easing style, and behavior
     info = TweenInfo.new(
         0.5,
         Enum.EasingStyle.Quad,
@@ -179,7 +202,7 @@ local animations, playAnimation = useGroupAnimation({
             position = Spring({target = UDim2.fromScale(0.5, 0.5), speed = 20}),
         },
     }),
-    inactive = useAnimation({
+    disable = useAnimation({
         transparency = Tween({target = 1, info = TweenInfo.new(0.1)}),
         position = Spring({target = UDim2.fromScale(0.5, 1), speed = 25}),
     }),
@@ -192,7 +215,10 @@ local animations, playAnimation = useGroupAnimation({
 if enabled then
     playAnimation("enable")
 else
-    playAnimation("disable")
+    playAnimation(
+        "disable",
+        true -- Optional second argument to play animation immediately
+    )
 end
 
 -- Use the animation bindings in your component:
@@ -200,6 +226,53 @@ return createElement("Frame", {
     Size = UDim2.new(0, 100, 0, 100),
     BackgroundTransparency = animations.transparency,
     Position = animations.position,
+})
+```
+
+---
+
+### `DynamicList`
+
+`DynamicList` is a component that automatically tracks and manages the addition, removal, and updating of child elements based on changes to its `children` prop. It ensures that its internal state stays synchronized with the provided `children`, updating dynamically when the children list changes.
+
+Key behavior:
+
+- **Child management**: The component will add new children or update existing ones based on changes in the `children` prop.
+- **Removing children**: When a child element is removed, it must call its `destroy` handler to clean up. The `remove` handler will notify `DynamicList` that the child has been removed by the parent, triggering the necessary state updates.
+
+This makes it easy to create lists where child elements can be added, updated, or removed without requiring manual state management.
+
+**Arguments:**
+
+- **children**: A table containing the elements to be managed by the list. The elements are automatically synchronized with the list’s internal state.
+
+**Returns:**
+
+A `DynamicList` component that handles the automatic synchronization of its children, ensuring they stay in sync with the latest state.
+
+**Example:**
+
+```lua
+local items, updateItems = useState({ item1 = "hello world!" })
+
+useEffect(function()
+    local thread = task.delay(5, function()
+        updateItems(function(state)
+            local newState = table.clone(state)
+            newState.item1 = nil
+            return newState
+            end)
+    end)
+
+    return function()
+        task.cancel(thread)
+    end
+end, {})
+
+return createElement(DynamicList, {}, {
+    item1 = items.items1 and createElement("TextLabel", {
+        Text = items.item1,
+    })
 })
 ```
 
@@ -229,14 +302,20 @@ React-Flow supports animating the following userdata and native types:
 ## 🎬 Showcase
 
 <div align="center">
-    <p style="font-size: 1.5em; font-weight: 500">Round Control Interface</p>
     <img src="https://i.imgur.com/y1On24b.gif" alt="RoundControl" style="width: 600px" />
+    <p style="font-size: 1.5em; font-weight: 500">Round Control Interface</p>
 </div>
 
 <div align="center" style="margin-top: 2rem">
-    <p style="font-size: 1.5em; font-weight: 500">Tower Upgrade Interface</p>
     <img src="https://i.imgur.com/tdhyG9f.gif" alt="TowerUpgrade" style="width: 600px"/>
+    <p style="font-size: 1.5em; font-weight: 500">Tower Upgrade Interface</p>
 </div>
+
+<div align="center" style="margin-top: 2rem">
+    <img src="https://i.imgur.com/9u4xaRN.gif" alt="NPCDialogue" style="width: 600px"/>
+    <p style="font-size: 1.5em; font-weight: 500">NPC Dialogue</p>
+</div>
+
 
 ## 💖 Contribution
 
